@@ -3,8 +3,8 @@
 Author: Vincent Young
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
-LastEditTime: 2023-07-05 23:34:02
-FilePath: /exchangeRate/rate.py
+LastEditTime: 2023-07-06 01:55:31
+FilePath: /ExchangeRate/rate.py
 Telegram: https://t.me/missuo
 
 Copyright © 2023 by Vincent, All Rights Reserved. 
@@ -131,11 +131,11 @@ def rate():
     dataDict = {
         "data": {
             "currencyName": data[0],
-            "currencyBuyPrice": data[1],
-            "cashBuyPrice": data[2],
-            "currencySellPrice": data[3],
-            "cashSellPrice": data[4],
-            "bocConversionPrice": data[5],
+            "foreignExchangeBuyingRate": data[1],
+            "cashBuyingRate": data[2],
+            "foreignExchangeSellingRate": data[3],
+            "cashSellingRate": data[4],
+            "bocConversionRate": data[5],
             "releaseTime": data[6],
         }
     }
