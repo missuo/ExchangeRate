@@ -17,13 +17,13 @@ A free RMB exchange rate API written in Flask
 ```json
 {
   "data": {
-    "bocConversionPrice": "785.01",
-    "cashBuyPrice": "761.5",
-    "cashSellPrice": "794.27",
-    "currencyBuyPrice": "785.92",
+    "bocConversionRate": "785.01",
+    "cashBuyingRate": "760.86",
+    "cashSellingRate": "793.59",
     "currencyName": "EUR",
-    "currencySellPrice": "791.72",
-    "releaseTime": "2023.07.05 23:22:27"
+    "foreignExchangeBuyingRate": "785.26",
+    "foreignExchangeSellingRate": "791.05",
+    "releaseTime": "2023.07.06 01:25:36"
   }
 }
 ```
