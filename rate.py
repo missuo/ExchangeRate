@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 01:55:31
+LastEditTime: 2023-07-06 16:01:38
 FilePath: /ExchangeRate/rate.py
 Telegram: https://t.me/missuo
 
@@ -14,6 +14,8 @@ from lxml import etree
 from flask_cors import CORS
 from flask import Flask, jsonify, request, abort
 from flask_caching import Cache
+from datetime import datetime, timedelta
+
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -96,6 +98,14 @@ currencyDictReversed = {
 def processText(text):
     return text.replace("\n","").replace("\r","").strip()
 
+def getPastWeekDates():
+    dates = []
+    today = datetime.today().date()
+    for i in range(7):
+        date = today - timedelta(days=i)
+        dates.append(date.strftime("%Y-%m-%d"))
+    return dates
+
 def getRate(currencyName):
     url = "https://srh.bankofchina.com/search/whpj/search_cn.jsp"
     headers = {
@@ -103,19 +113,25 @@ def getRate(currencyName):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
 
     }
-    body = {
-        "erectDate": "",
-        "nothing": "",
-        "pjname": currencyName
-    }
-
-    r = httpx.post(url=url, data=body, headers=headers).text
-    tree = etree.HTML(r)
-    data = tree.xpath('//table/tr[2]/td')
-    processedData = [processText(i.text) for i in data]
-    processedData[0] = currencyDictReversed[processedData[0]]
-    return processedData
-
+    processedDataArray =[]
+    for i in range(7):
+        date = getPastWeekDates()[i]
+        body = {
+            "erectDate": date,
+            "nothing": date,
+            "pjname": currencyName,
+            "page": 20,
+            "head": "head_620.js",
+            "bottom": "bottom_591.js",
+        }
+        r = httpx.post(url=url, data=body, headers=headers).text
+        tree = etree.HTML(r)
+        data = tree.xpath('//table/tr[2]/td')
+        processedData = [processText(item.text) for item in data]
+        processedData[0] = currencyDictReversed[processedData[0]]
+        processedDataArray.append(processedData)
+    return processedDataArray
+    
 def cache_key():
     return request.url
 
@@ -128,18 +144,19 @@ def rate():
     data = getRate(currencyDict.get(currencyName))
     if not data:
         abort(404)
-    dataDict = {
-        "data": {
-            "currencyName": data[0],
-            "foreignExchangeBuyingRate": data[1],
-            "cashBuyingRate": data[2],
-            "foreignExchangeSellingRate": data[3],
-            "cashSellingRate": data[4],
-            "bocConversionRate": data[5],
-            "releaseTime": data[6],
+    lastWeekArray = []
+    for item in data:
+        dataDict = {
+            "currencyName": item[0],
+            "foreignExchangeBuyingRate": item[1],
+            "cashBuyingRate": item[2],
+            "foreignExchangeSellingRate": item[3],
+            "cashSellingRate": item[4],
+            "bocConversionRate": item[5],
+            "releaseTime": item[6],
         }
-    }
-    return jsonify(dataDict)
+        lastWeekArray.append(dataDict)
+    return jsonify(lastWeekArray)
     
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
