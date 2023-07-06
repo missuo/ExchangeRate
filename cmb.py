@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-06 21:38:29
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 22:26:54
+LastEditTime: 2023-07-06 22:52:15
 FilePath: /ExchangeRate/cmb.py
 Telegram: https://t.me/missuo
 
@@ -24,7 +24,7 @@ def processText(text):
     return text.replace("\n","").replace("\r","").strip()
 
 def processDate(text):
-    return text.replace("年",".").replace("月",".").replace("日","")
+    return text.replace("年",".").replace("月",".").replace("日"," 00:00:00")
 
 currencyDictReversed = {
     "港币": "HKD",
