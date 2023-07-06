@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 18:39:18
+LastEditTime: 2023-07-06 18:43:39
 FilePath: /ExchangeRate/rate.py
 Telegram: https://t.me/missuo
 
@@ -149,7 +149,13 @@ def rate():
     data = getRate(currencyDict.get(currencyName))
     if not data:
         abort(404)
+    
     lastWeekArray = []
+    
+    respDict = {
+        "data": lastWeekArray
+    }
+   
     for item in data:
         dataDict = {
             "currencyName": item[0],
@@ -161,7 +167,7 @@ def rate():
             "releaseTime": item[6],
         }
         lastWeekArray.append(dataDict)
-    return jsonify(lastWeekArray)
+    return jsonify(respDict)
     
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
