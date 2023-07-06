@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 01:55:31
+LastEditTime: 2023-07-06 11:12:06
 FilePath: /ExchangeRate/rate.py
 Telegram: https://t.me/missuo
 
@@ -111,10 +111,13 @@ def getRate(currencyName):
 
     r = httpx.post(url=url, data=body, headers=headers).text
     tree = etree.HTML(r)
-    data = tree.xpath('//table/tr[2]/td')
-    processedData = [processText(i.text) for i in data]
-    processedData[0] = currencyDictReversed[processedData[0]]
-    return processedData
+    weekData = []
+    for i in range(2, 8):
+        data = tree.xpath('//table/tr[{}]/td'.format(i))
+        processedData = [processText(i.text) for i in data]
+        processedData[0] = currencyDictReversed[processedData[0]]
+        weekData.append(processedData)
+    return weekData
 
 def cache_key():
     return request.url
@@ -125,11 +128,12 @@ def rate():
     currencyName = request.args.get('currency')
     if not currencyName or len(currencyName) != 3:
         abort(400)
-    data = getRate(currencyDict.get(currencyName))
-    if not data:
+    weekData = getRate(currencyDict.get(currencyName))
+    if not weekData:
         abort(404)
-    dataDict = {
-        "data": {
+    dataArray = []
+    for data in weekData:
+        dataDict = {
             "currencyName": data[0],
             "foreignExchangeBuyingRate": data[1],
             "cashBuyingRate": data[2],
@@ -138,8 +142,12 @@ def rate():
             "bocConversionRate": data[5],
             "releaseTime": data[6],
         }
+        dataArray.append(dataDict)
+    formattedData = {
+        "data": dataArray,
     }
-    return jsonify(dataDict)
+
+    return jsonify(formattedData)
     
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
