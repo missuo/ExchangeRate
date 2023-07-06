@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 16:01:38
+LastEditTime: 2023-07-06 18:39:18
 FilePath: /ExchangeRate/rate.py
 Telegram: https://t.me/missuo
 
@@ -114,13 +114,18 @@ def getRate(currencyName):
 
     }
     processedDataArray =[]
+
     for i in range(7):
         date = getPastWeekDates()[i]
+        if i == 0:
+            page = 1
+        else:
+            page = 20
         body = {
             "erectDate": date,
             "nothing": date,
             "pjname": currencyName,
-            "page": 20,
+            "page": page,
             "head": "head_620.js",
             "bottom": "bottom_591.js",
         }
