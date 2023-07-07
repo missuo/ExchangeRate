@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-06 21:38:29
 LastEditors: Vincent Young
-LastEditTime: 2023-07-06 22:52:15
+LastEditTime: 2023-07-07 18:48:04
 FilePath: /ExchangeRate/cmb.py
 Telegram: https://t.me/missuo
 
@@ -26,20 +26,7 @@ def processText(text):
 def processDate(text):
     return text.replace("年",".").replace("月",".").replace("日"," 00:00:00")
 
-currencyDictReversed = {
-    "港币": "HKD",
-    "澳大利亚元": "AUD",
-    "美元": "USD",
-    "欧元": "EUR",
-    "加拿大元": "CAD",
-    "英镑": "GBP",
-    "日元": "JPY",
-    "新加坡元": "SGD",
-    "瑞士法郎": "CHF",
-    "新西兰元": "NZD"
-}
-
-currencyDict = {
+currencyDictCMB = {
     "HKD": "港币",
     "AUD": "澳大利亚元",
     "USD": "美元",
@@ -50,6 +37,80 @@ currencyDict = {
     "SGD": "新加坡元",
     "CHF": "瑞士法郎",
     "NZD": "新西兰元"
+}
+
+currencyDict = {
+    'GBP': '英镑',
+    'HKD': '港币',
+    'USD': '美元',
+    'CHF': '瑞士法郎',
+    'DEM': '德国马克',
+    'FRF': '法国法郎',
+    'SGD': '新加坡元',
+    'SEK': '瑞典克朗',
+    'DKK': '丹麦克朗',
+    'NOK': '挪威克朗',
+    'JPY': '日元',
+    'CAD': '加拿大元',
+    'AUD': '澳大利亚元',
+    'EUR': '欧元',
+    'MOP': '澳门元',
+    'PHP': '菲律宾比索',
+    'THB': '泰国铢',
+    'NZD': '新西兰元',
+    'KRW': '韩元',
+    'RUB': '卢布',
+    'MYR': '林吉特',
+    'TWD': '新台币',
+    'ESP': '西班牙比塞塔',
+    'ITL': '意大利里拉',
+    'NLG': '荷兰盾',
+    'BEF': '比利时法郎',
+    'FIM': '芬兰马克',
+    'INR': '印度卢比',
+    'IDR': '印尼卢比',
+    'BRL': '巴西里亚尔',
+    'AED': '阿联酋迪拉姆',
+    'ZAR': '南非兰特',
+    'SAR': '沙特里亚尔',
+    'TRY': '土耳其里拉'
+}
+
+currencyDictReversed = {
+    '英镑': 'GBP',
+    '港币': 'HKD',
+    '美元': 'USD',
+    '瑞士法郎': 'CHF',
+    '德国马克': 'DEM',
+    '法国法郎': 'FRF',
+    '新加坡元': 'SGD',
+    '瑞典克朗': 'SEK',
+    '丹麦克朗': 'DKK',
+    '挪威克朗': 'NOK',
+    '日元': 'JPY',
+    '加拿大元': 'CAD',
+    '澳大利亚元': 'AUD',
+    '欧元': 'EUR',
+    '澳门元': 'MOP',
+    '菲律宾比索': 'PHP',
+    '泰国铢': 'THB',
+    '新西兰元': 'NZD',
+    '韩元': 'KRW',
+    '卢布': 'RUB',
+    '林吉特': 'MYR',
+    '新台币': 'TWD',
+    '西班牙比塞塔': 'ESP',
+    '意大利里拉': 'ITL',
+    '荷兰盾': 'NLG',
+    '比利时法郎': 'BEF',
+    '芬兰马克': 'FIM',
+    '印度卢比': 'INR',
+    '印尼卢比': 'IDR',
+    '巴西里亚尔': 'BRL',
+    '阿联酋迪拉姆': 'AED',
+    '南非兰特': 'ZAR',
+    '沙特里亚尔': 'SAR',
+    '土耳其里拉': 'TRY'
 }
 
 def getHistoryRateFromCMB(currencyName):
@@ -100,10 +161,6 @@ def rate():
     if not currencyName or len(currencyName) != 3:
         abort(400)
     currentRateData = getCurrentRate(currencyDict.get(currencyName))
-    hositoryRateData = getHistoryRateFromCMB(currencyDict.get(currencyName))
-    if not currentRateData or not hositoryRateData:
-        abort(404)
-    
     rateArray = []
     respDict = {
         "data": rateArray
@@ -118,18 +175,19 @@ def rate():
         "releaseTime": currentRateData[6],
     }
     rateArray.append(dataDict)
-    
-    for dayItem in hositoryRateData:
-        dataDict = {
-        "currencyName": "",
-        "foreignExchangeBuyingRate": dayItem[1],
-        "cashBuyingRate": dayItem[2],
-        "foreignExchangeSellingRate": dayItem[3],
-        "cashSellingRate": dayItem[4],
-        "bocConversionRate": "",
-        "releaseTime": dayItem[0],
-        }
-        rateArray.append(dataDict)
+    if currencyName in currencyDictCMB:
+        hositoryRateData = getHistoryRateFromCMB(currencyDict.get(currencyName))
+        for dayItem in hositoryRateData:
+            dataDict = {
+                "currencyName": "",
+                "foreignExchangeBuyingRate": dayItem[1],
+                "cashBuyingRate": dayItem[2],
+                "foreignExchangeSellingRate": dayItem[3],
+                "cashSellingRate": dayItem[4],
+                "bocConversionRate": "",
+                "releaseTime": dayItem[0],
+            }
+            rateArray.append(dataDict)   
 
     return jsonify(respDict)
     
