@@ -2,7 +2,8 @@
 A free RMB exchange rate API written in Flask
 
 ## iOS App
-![https://upload.wikimedia.org/wikipedia/commons/5/51/Download_on_the_App_Store_Badge_US-UK_RGB_blk.svg](https://apps.apple.com/cn/app/dollar-currency-widget/id6450919353)
+[![Download on App Store](https://upload.wikimedia.org/wikipedia/commons/5/51/Download_on_the_App_Store_Badge_US-UK_RGB_blk.svg)](https://apps.apple.com/cn/app/dollar-currency-widget/id6450919353)
+
 
 ## User Guide
 ### Call API
