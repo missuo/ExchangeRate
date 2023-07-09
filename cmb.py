@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-06 21:38:29
 LastEditors: Vincent Young
-LastEditTime: 2023-07-07 18:48:04
+LastEditTime: 2023-07-09 18:05:04
 FilePath: /ExchangeRate/cmb.py
 Telegram: https://t.me/missuo
 
@@ -123,7 +123,7 @@ def getHistoryRateFromCMB(currencyName):
     tree = etree.HTML(r)
     dayArray = []
     monthArray = []
-    for day in range(2, 31):
+    for day in range(1, 31):
         dayArray = []
         for i in range(1, 6):
             data = tree.xpath('//table/tbody[2]/tr[{}]/td[{}]'.format(day, i))
