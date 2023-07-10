@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-06 21:38:29
 LastEditors: Vincent Young
-LastEditTime: 2023-07-09 18:05:04
+LastEditTime: 2023-07-11 02:07:14
 FilePath: /ExchangeRate/cmb.py
 Telegram: https://t.me/missuo
 
@@ -179,7 +179,7 @@ def rate():
         hositoryRateData = getHistoryRateFromCMB(currencyDict.get(currencyName))
         for dayItem in hositoryRateData:
             dataDict = {
-                "currencyName": "",
+                "currencyName": currencyName,
                 "foreignExchangeBuyingRate": dayItem[1],
                 "cashBuyingRate": dayItem[2],
                 "foreignExchangeSellingRate": dayItem[3],
