@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Author: Vincent Young
+Author: Vincent Young, Sark Xing
 Date: 2023-07-05 22:18:19
 LastEditors: Vincent Young
 LastEditTime: 2023-07-06 18:43:39
@@ -15,7 +15,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request, abort
 from flask_caching import Cache
 from datetime import datetime, timedelta
-
+import requests
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -98,7 +98,10 @@ currencyDictReversed = {
 def processText(text):
     return text.replace("\n","").replace("\r","").strip()
 
-def getPastWeekDates():
+def cache_key():
+    return request.url
+
+def getBoCPastWeekDates():
     dates = []
     today = datetime.today().date()
     for i in range(7):
@@ -106,7 +109,23 @@ def getPastWeekDates():
         dates.append(date.strftime("%Y-%m-%d"))
     return dates
 
-def getRate(currencyName):
+def getVISAPastWeekDates():
+    dates = []
+    today = datetime.today().date()
+    for i in range(7):
+        date = today - timedelta(days=i)
+        dates.append(date.strftime("%m/%d/%Y"))
+    return dates
+
+def getUnionPastWeekDates():
+    dates = []
+    today = datetime.today().date()
+    for i in range(7):
+        date = today - timedelta(days=i)
+        dates.append(date.strftime("%Y%m%d"))
+    return dates
+
+def get_boc_rate(currencyName):
     url = "https://srh.bankofchina.com/search/whpj/search_cn.jsp"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -116,7 +135,7 @@ def getRate(currencyName):
     processedDataArray =[]
 
     for i in range(7):
-        date = getPastWeekDates()[i]
+        date = getBoCPastWeekDates()[i]
         if i == 0:
             page = 1
         else:
@@ -136,7 +155,41 @@ def getRate(currencyName):
         processedData[0] = currencyDictReversed[processedData[0]]
         processedDataArray.append(processedData)
     return processedDataArray
-    
+
+def get_visa_rate(currencyName):
+    headers = {'Referer': 'https://usa.visa.com/'}
+    processedDataArray = []
+
+    for visa_date in getVISAPastWeekDates():
+        url = f"https://usa.visa.com/cmsapi/fx/rates?amount=1&fee=2&utcConvertedDate={visa_date}&exchangedate={visa_date}&fromCurr=CNY&toCurr={currencyName}"
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            rate = data["originalValues"]["fxRateVisa"]
+            timestamp = data["originalValues"]["lastUpdatedVisaRate"]
+            processedDataArray.append({'currencyName': currencyName, 'rate': rate, 'releaseTime': visa_date})
+        else:
+            print(f"Failed to get rate for {visa_date}")
+
+    return processedDataArray
+
+
+def get_union_rate(currencyName):
+    processedDataArray = []
+
+    for union_date in getUnionPastWeekDates():
+        url = f"https://www.unionpayintl.com/upload/jfimg/{union_date}.json"
+        response = requests.get(url)
+        if response.status_code == 200:
+            exchangeRateJson = response.json().get('exchangeRateJson', [])
+            rateObj = next((rate for rate in exchangeRateJson if rate['baseCur'] == "CNY" and rate['transCur'] == currencyName), None)
+            rate = rateObj.get('rateData', 'No rate found for provided currencies') if rateObj else 'No rate found for provided currencies'
+            processedDataArray.append({'currencyName': currencyName, 'rate': rate, 'releaseTime': union_date})
+        else:
+            print(f"Failed to get rate for {union_date}")
+
+    return processedDataArray
+
 def cache_key():
     return request.url
 
@@ -146,29 +199,10 @@ def rate():
     currencyName = request.args.get('currency')
     if not currencyName or len(currencyName) != 3:
         abort(400)
-    data = getRate(currencyDict.get(currencyName))
-    if not data:
-        abort(404)
-    
-    lastWeekArray = []
-    
-    respDict = {
-        "data": lastWeekArray
-    }
-   
-    for item in data:
-        dataDict = {
-            "currencyName": item[0],
-            "foreignExchangeBuyingRate": item[1],
-            "cashBuyingRate": item[2],
-            "foreignExchangeSellingRate": item[3],
-            "cashSellingRate": item[4],
-            "bocConversionRate": item[5],
-            "releaseTime": item[6],
-        }
-        lastWeekArray.append(dataDict)
-    return jsonify(respDict)
-    
+    # boc_data = get_boc_rate(currencyName)
+    visa_data = get_visa_rate(currencyName)
+    union_data = get_union_rate(currencyName)
+    return jsonify({"union_data": union_data},{"visa_data": visa_data})
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False
     app.run(host='0.0.0.0', port=6666)
