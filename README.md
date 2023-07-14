@@ -41,6 +41,19 @@ For example, the first time to get the dollar exchange rate, the API of this pro
 ```python
 @cache.cached(timeout=300, key_prefix=cache_key)
 ```
+## Deploy
+### Install required dependencies
+```bash
+pip install -r requirements.txt
+```
+### Run
+```bash
+gunicorn cmb:app
+# or
+gunicorn card-org:app
+# or
+gunicorn rate:app
+```
 
 ## Data Source
 [Bank of China](https://www.boc.cn/en/)
