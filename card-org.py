@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-15 02:37:23
 LastEditors: Vincent Young
-LastEditTime: 2023-07-15 03:35:32
+LastEditTime: 2023-07-15 11:59:56
 FilePath: /ExchangeRate/card-org.py
 Telegram: https://t.me/missuo
 
@@ -21,6 +21,7 @@ CORS(app)
 
 supportedCurrenciesUnion = ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'HKD', 'HUF', 'JPY', 'MOP', 'NZD', 'SGD', 'THB', 'USD', 'VND']
 supportedCurrenciesVisa = ['USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'MXN', 'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY', 'COP', 'CRC', 'CVE', 'CYP', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EEK', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHS', 'GIP', 'GMD', 'GNF', 'GQE', 'GTQ', 'GWP', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LTL', 'LVL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRO', 'MRU', 'MTL', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SIT', 'SKK', 'SLE', 'SLL', 'SOS', 'SRD', 'SSP', 'STD', 'STN', 'SVC', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VEF', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW', 'ZWL']
+supportedCurrenciesMaster = ['AFN', 'ALL', 'DZD', 'AOA', 'ARS', 'AMD', 'AWG', 'AUD', 'AZN', 'BSD', 'BHD', 'BDT', 'BBD', 'BYN', 'BZD', 'BMD', 'BTN', 'BOB', 'BAM', 'BWP', 'BRL', 'BND', 'BGN', 'BIF', 'KHR', 'CAD', 'CVE', 'KYD', 'XOF', 'XAF', 'XPF', 'CLP', 'CNY', 'COP', 'KMF', 'CDF', 'CRC', 'CUP', 'CZK', 'DKK', 'DJF', 'DOP', 'XCD', 'EGP', 'SVC', 'ETB', 'EUR', 'FKP', 'FJD', 'GMD', 'GEL', 'GHS', 'GIP', 'GBP', 'GTQ', 'GNF', 'GYD', 'HTG', 'HNL', 'HKD', 'HUF', 'ISK', 'INR', 'IDR', 'IQD', 'ILS', 'JMD', 'JPY', 'JOD', 'KZT', 'KES', 'KWD', 'KGS', 'LAK', 'LBP', 'LSL', 'LRD', 'LYD', 'MOP', 'MKD', 'MGA', 'MWK', 'MYR', 'MVR', 'MRU', 'MUR', 'MXN', 'MDL', 'MNT', 'MAD', 'MZN', 'MMK', 'NAD', 'NPR', 'ANG', 'NZD', 'NIO', 'NGN', 'NOK', 'OMR', 'PKR', 'PAB', 'PGK', 'PYG', 'PEN', 'PHP', 'PLN', 'QAR', 'RON', 'RUB', 'RWF', 'SHP', 'WST', 'STN', 'SAR', 'RSD', 'SCR', 'SLE', 'SGD', 'SBD', 'SOS', 'ZAR', 'KRW', 'SSP', 'LKR', 'SDG', 'SRD', 'SZL', 'SEK', 'CHF', 'TWD', 'TJS', 'TZS', 'THB', 'TOP', 'TTD', 'TND', 'TRY', 'TMT', 'UGX', 'UAH', 'AED', 'USD', 'UYU', 'UZS', 'VUV', 'VES', 'VND', 'YER', 'ZMW', 'ZWL']
 
 def getUnionRate(currencyName, unionDate):
     url = f"https://www.unionpayintl.com/upload/jfimg/{unionDate}.json"
@@ -38,7 +39,19 @@ def getVisaRate(currencyName, visaDate):
     if response.status_code == 200:
         data = response.json()
         rate = data["originalValues"]["fxRateVisa"]
-        return rate
+        return float(rate)
+
+def getMasterRate(currencyName, masterDate):
+	url = f"https://www.mastercard.us/settlement/currencyrate/conversion-rate?fxDate={masterDate}&transCurr={currencyName}&crdhldBillCurr=CNY&bankFee=2&transAmt=1"
+	headers = {
+		"Referer": "https://www.mastercard.us/en-us/personal/get-support/convert-currency.html",
+		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+	}
+	response = httpx.get(url, headers=headers)
+	if response.status_code == 200:
+		data = response.json()
+		rate = data['data']['conversionRate']
+		return rate
 
 def cache_key():
     return request.url
@@ -72,9 +85,14 @@ def getRate():
             visaRate = getVisaRate(currencyName, visaDate)
         else:
             visaRate = "Unsupported Currency"
+        if currencyName in supportedCurrenciesMaster:
+            masterRate = getMasterRate(currencyName, formattedDate)
+        else:
+            masterRate = "Unsupported Currency"
         respDict = {
             "visaRate": visaRate,
             "unionRate": unionRate,
+            "masterRate": masterRate,
             "releaseDate": formattedDate
         }
         respList.append(respDict)
