@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-15 02:37:23
 LastEditors: Vincent Young
-LastEditTime: 2023-07-15 11:59:56
+LastEditTime: 2023-07-15 12:12:53
 FilePath: /ExchangeRate/card-org.py
 Telegram: https://t.me/missuo
 
@@ -38,7 +38,7 @@ def getVisaRate(currencyName, visaDate):
     response = httpx.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
-        rate = data["originalValues"]["fxRateVisa"]
+        rate = data["convertedAmount"]
         return float(rate)
 
 def getMasterRate(currencyName, masterDate):
