@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-15 02:37:23
 LastEditors: Vincent Young
-LastEditTime: 2023-07-16 19:19:39
+LastEditTime: 2023-07-17 03:29:05
 FilePath: /ExchangeRate/card-org.py
 Telegram: https://t.me/missuo
 
@@ -80,43 +80,52 @@ def getRate():
     bankFee = request.args.get('bankFee')
     if bankFee is None:
         bankFee = 0
+    message = []
+    if transcurrName not in supportedCurrenciesUnion:
+        message.append("UnionPay does not support this currency!")
+    if transcurrName not in supportedCurrenciesVisa:
+        message.append("Visa does not support this currency!")
+    if transcurrName not in supportedCurrenciesMaster:
+        message.append("Mastercard does not support this currency!")
     respList = []
     resp = {
+        "message": message,
         "data": respList
     }
+    # Offset date by 11 hours
     today = datetime.today() - timedelta(hours=11) 
-    for i in range(7):
-        # Offset date by 11 hours
-        date = (today - timedelta(days=i))
-        formattedDate = date.strftime("%Y-%m-%d")
-        if date.weekday() == 5: # Saturday
-            unionDate = (today - timedelta(days=1))
-            unionDate = unionDate.strftime("%Y%m%d")
-        elif date.weekday() == 6: # Sunday
-            unionDate = (today - timedelta(days=2))
-            unionDate = unionDate.strftime("%Y%m%d")
-        else:
-            unionDate = date.strftime("%Y%m%d")
-        visaDate = date.strftime("%m/%d/%Y")
-        if transcurrName in supportedCurrenciesUnion:
-            unionRate = getUnionRate(basecurrName, transcurrName, unionDate)
-        else:
-            unionRate = "Unsupported Currency"
-        if transcurrName in supportedCurrenciesVisa:
-            visaRate = getVisaRate(basecurrName, transcurrName, visaDate, bankFee)
-        else:
-            visaRate = "Unsupported Currency"
-        if transcurrName in supportedCurrenciesMaster:
-            masterRate = getMasterRate(basecurrName, transcurrName, formattedDate, bankFee)
-        else:
-            masterRate = "Unsupported Currency"
-        respDict = {
-            "visaRate": visaRate,
-            "unionRate": unionRate,
-            "masterRate": masterRate,
-            "releaseDate": formattedDate
-        }
-        respList.append(respDict)
+    unionRate = None
+    visaRate = None
+    masterRate = None
+    if transcurrName not in supportedCurrenciesUnion and transcurrName not in supportedCurrenciesVisa and transcurrName not in supportedCurrenciesMaster:
+        respList = []
+    else:
+        message.append("ok!")
+        for i in range(7):
+            date = (today - timedelta(days=i))
+            formattedDate = date.strftime("%Y-%m-%d")
+            if date.weekday() == 5: # Saturday
+                unionDate = (today - timedelta(days=1))
+                unionDate = unionDate.strftime("%Y%m%d")
+            elif date.weekday() == 6: # Sunday
+                unionDate = (today - timedelta(days=2))
+                unionDate = unionDate.strftime("%Y%m%d")
+            else:
+                unionDate = date.strftime("%Y%m%d")
+            visaDate = date.strftime("%m/%d/%Y")
+            if transcurrName in supportedCurrenciesUnion:
+                unionRate = getUnionRate(basecurrName, transcurrName, unionDate)
+            if transcurrName in supportedCurrenciesVisa:
+                visaRate = getVisaRate(basecurrName, transcurrName, visaDate, bankFee)
+            if transcurrName in supportedCurrenciesMaster:
+                masterRate = getMasterRate(basecurrName, transcurrName, formattedDate, bankFee)
+            respDict = {
+                "visaRate": visaRate,
+                "unionRate": unionRate,
+                "masterRate": masterRate,
+                "releaseDate": formattedDate
+            }
+            respList.append(respDict)
     return jsonify(resp)
     
 if __name__ == '__main__':
