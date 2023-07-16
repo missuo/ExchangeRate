@@ -33,26 +33,26 @@ supportedCurrenciesUnion = ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'HKD', 'HUF', 'JP
 supportedCurrenciesVisa = ['USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'MXN', 'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY', 'COP', 'CRC', 'CVE', 'CYP', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EEK', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHS', 'GIP', 'GMD', 'GNF', 'GQE', 'GTQ', 'GWP', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LTL', 'LVL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRO', 'MRU', 'MTL', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SIT', 'SKK', 'SLE', 'SLL', 'SOS', 'SRD', 'SSP', 'STD', 'STN', 'SVC', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VEF', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW', 'ZWL']
 supportedCurrenciesMaster = ['AFN', 'ALL', 'DZD', 'AOA', 'ARS', 'AMD', 'AWG', 'AUD', 'AZN', 'BSD', 'BHD', 'BDT', 'BBD', 'BYN', 'BZD', 'BMD', 'BTN', 'BOB', 'BAM', 'BWP', 'BRL', 'BND', 'BGN', 'BIF', 'KHR', 'CAD', 'CVE', 'KYD', 'XOF', 'XAF', 'XPF', 'CLP', 'CNY', 'COP', 'KMF', 'CDF', 'CRC', 'CUP', 'CZK', 'DKK', 'DJF', 'DOP', 'XCD', 'EGP', 'SVC', 'ETB', 'EUR', 'FKP', 'FJD', 'GMD', 'GEL', 'GHS', 'GIP', 'GBP', 'GTQ', 'GNF', 'GYD', 'HTG', 'HNL', 'HKD', 'HUF', 'ISK', 'INR', 'IDR', 'IQD', 'ILS', 'JMD', 'JPY', 'JOD', 'KZT', 'KES', 'KWD', 'KGS', 'LAK', 'LBP', 'LSL', 'LRD', 'LYD', 'MOP', 'MKD', 'MGA', 'MWK', 'MYR', 'MVR', 'MRU', 'MUR', 'MXN', 'MDL', 'MNT', 'MAD', 'MZN', 'MMK', 'NAD', 'NPR', 'ANG', 'NZD', 'NIO', 'NGN', 'NOK', 'OMR', 'PKR', 'PAB', 'PGK', 'PYG', 'PEN', 'PHP', 'PLN', 'QAR', 'RON', 'RUB', 'RWF', 'SHP', 'WST', 'STN', 'SAR', 'RSD', 'SCR', 'SLE', 'SGD', 'SBD', 'SOS', 'ZAR', 'KRW', 'SSP', 'LKR', 'SDG', 'SRD', 'SZL', 'SEK', 'CHF', 'TWD', 'TJS', 'TZS', 'THB', 'TOP', 'TTD', 'TND', 'TRY', 'TMT', 'UGX', 'UAH', 'AED', 'USD', 'UYU', 'UZS', 'VUV', 'VES', 'VND', 'YER', 'ZMW', 'ZWL']
 
-def getUnionRate(currencyName, unionDate):
+def getUnionRate(basecurrName, transcurrName, unionDate):
     url = f"https://www.unionpayintl.com/upload/jfimg/{unionDate}.json"
     response = httpx.get(url)
     if response.status_code == 200:
         exchangeRateJson = response.json().get('exchangeRateJson', [])
-        rateObj = next((rate for rate in exchangeRateJson if rate['baseCur'] == "CNY" and rate['transCur'] == currencyName), None)
+        rateObj = next((rate for rate in exchangeRateJson if rate['baseCur'] == basecurrName and rate['transCur'] == transcurrName), None)
         rate = rateObj.get('rateData', 'No rate found for provided currencies') if rateObj else 'No rate found for provided currencies'
         return rate
     
-def getVisaRate(currencyName, visaDate, bankFee):
+def getVisaRate(basecurrName, transcurrName, visaDate, bankFee):
     headers = {'Referer': 'https://usa.visa.com/'}
-    url = f"https://usa.visa.com/cmsapi/fx/rates?amount=1&fee={bankFee}&utcConvertedDate={visaDate}&exchangedate={visaDate}&fromCurr=CNY&toCurr={currencyName}"
+    url = f"https://usa.visa.com/cmsapi/fx/rates?amount=1&fee={bankFee}&utcConvertedDate={visaDate}&exchangedate={visaDate}&fromCurr={basecurrName}&toCurr={transcurrName}"
     response = httpx.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
         rate = data["convertedAmount"]
         return float(rate)
 
-def getMasterRate(currencyName, masterDate, bankFee):
-	url = f"https://www.mastercard.us/settlement/currencyrate/conversion-rate?fxDate={masterDate}&transCurr={currencyName}&crdhldBillCurr=CNY&bankFee={bankFee}&transAmt=1"
+def getMasterRate(basecurrName, transcurrName, masterDate, bankFee):
+	url = f"https://www.mastercard.us/settlement/currencyrate/conversion-rate?fxDate={masterDate}&transCurr={transcurrName}&crdhldBillCurr={basecurrName}&bankFee={bankFee}&transAmt=1"
 	headers = {
 		"Referer": "https://www.mastercard.us/en-us/personal/get-support/convert-currency.html",
 		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
@@ -69,7 +69,12 @@ def cache_key():
 @app.route('/')
 @cache.cached(timeout=86400, key_prefix=cache_key)
 def getRate():
-    currencyName = request.args.get('currency')
+    transcurrName = request.args.get('currency')
+    if transcurrName:
+        transcurrName = transcurrName.upper()
+    basecurrName = request.args.get('base')
+    if basecurrName is None:
+        basecurrName = 'CNY'
     bankFee = request.args.get('bankFee')
     if bankFee is None:
         bankFee = 0
@@ -90,16 +95,16 @@ def getRate():
         else:
             unionDate = date.strftime("%Y%m%d")
         visaDate = date.strftime("%m/%d/%Y")
-        if currencyName in supportedCurrenciesUnion:
-            unionRate = getUnionRate(currencyName, unionDate)
+        if transcurrName in supportedCurrenciesUnion:
+            unionRate = getUnionRate(basecurrName, transcurrName, unionDate)
         else:
             unionRate = "Unsupported Currency"
-        if currencyName in supportedCurrenciesVisa:
-            visaRate = getVisaRate(currencyName, visaDate, bankFee)
+        if transcurrName in supportedCurrenciesVisa:
+            visaRate = getVisaRate(basecurrName, transcurrName, visaDate, bankFee)
         else:
             visaRate = "Unsupported Currency"
-        if currencyName in supportedCurrenciesMaster:
-            masterRate = getMasterRate(currencyName, formattedDate, bankFee)
+        if transcurrName in supportedCurrenciesMaster:
+            masterRate = getMasterRate(basecurrName, transcurrName, formattedDate, bankFee)
         else:
             masterRate = "Unsupported Currency"
         respDict = {
