@@ -3,7 +3,7 @@
 Author: Vincent Young
 Date: 2023-07-15 02:37:23
 LastEditors: Vincent Young
-LastEditTime: 2023-07-15 18:33:46
+LastEditTime: 2023-07-16 19:19:39
 FilePath: /ExchangeRate/card-org.py
 Telegram: https://t.me/missuo
 
@@ -70,7 +70,9 @@ def cache_key():
 @cache.cached(timeout=86400, key_prefix=cache_key)
 def getRate():
     transcurrName = request.args.get('currency')
-    if transcurrName:
+    if transcurrName is None:
+        transcurrName = 'USD'
+    else:
         transcurrName = transcurrName.upper()
     basecurrName = request.args.get('base')
     if basecurrName is None:
