@@ -72,7 +72,7 @@ def getRate():
     currencyName = request.args.get('currency')
     bankFee = request.args.get('bankFee')
     if bankFee is None:
-        bankFee == 0
+        bankFee = 0
     respList = []
     resp = {
         "data": respList
