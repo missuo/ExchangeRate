@@ -84,15 +84,16 @@ def getRate():
     resp = {
         "data": respList
     }
-    today = datetime.today().date()
+    today = datetime.today() - timedelta(hours=11) 
     for i in range(7):
-        date = today - timedelta(days=i)
+        # Offset date by 11 hours
+        date = (today - timedelta(days=i))
         formattedDate = date.strftime("%Y-%m-%d")
         if date.weekday() == 5: # Saturday
-            unionDate = today - timedelta(days=1)
+            unionDate = (today - timedelta(days=1))
             unionDate = unionDate.strftime("%Y%m%d")
         elif date.weekday() == 6: # Sunday
-            unionDate = today - timedelta(days=2)
+            unionDate = (today - timedelta(days=2))
             unionDate = unionDate.strftime("%Y%m%d")
         else:
             unionDate = date.strftime("%Y%m%d")
