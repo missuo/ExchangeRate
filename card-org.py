@@ -15,6 +15,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request, abort
 from flask_caching import Cache
 from apscheduler.schedulers.background import BackgroundScheduler
+import json
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -32,6 +33,7 @@ scheduler.start()
 supportedCurrenciesUnion = ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'HKD', 'HUF', 'JPY', 'MOP', 'NZD', 'SGD', 'THB', 'USD', 'VND']
 supportedCurrenciesVisa = ['USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'MXN', 'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY', 'COP', 'CRC', 'CVE', 'CYP', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EEK', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHS', 'GIP', 'GMD', 'GNF', 'GQE', 'GTQ', 'GWP', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LTL', 'LVL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRO', 'MRU', 'MTL', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SIT', 'SKK', 'SLE', 'SLL', 'SOS', 'SRD', 'SSP', 'STD', 'STN', 'SVC', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VEF', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW', 'ZWL']
 supportedCurrenciesMaster = ['AFN', 'ALL', 'DZD', 'AOA', 'ARS', 'AMD', 'AWG', 'AUD', 'AZN', 'BSD', 'BHD', 'BDT', 'BBD', 'BYN', 'BZD', 'BMD', 'BTN', 'BOB', 'BAM', 'BWP', 'BRL', 'BND', 'BGN', 'BIF', 'KHR', 'CAD', 'CVE', 'KYD', 'XOF', 'XAF', 'XPF', 'CLP', 'CNY', 'COP', 'KMF', 'CDF', 'CRC', 'CUP', 'CZK', 'DKK', 'DJF', 'DOP', 'XCD', 'EGP', 'SVC', 'ETB', 'EUR', 'FKP', 'FJD', 'GMD', 'GEL', 'GHS', 'GIP', 'GBP', 'GTQ', 'GNF', 'GYD', 'HTG', 'HNL', 'HKD', 'HUF', 'ISK', 'INR', 'IDR', 'IQD', 'ILS', 'JMD', 'JPY', 'JOD', 'KZT', 'KES', 'KWD', 'KGS', 'LAK', 'LBP', 'LSL', 'LRD', 'LYD', 'MOP', 'MKD', 'MGA', 'MWK', 'MYR', 'MVR', 'MRU', 'MUR', 'MXN', 'MDL', 'MNT', 'MAD', 'MZN', 'MMK', 'NAD', 'NPR', 'ANG', 'NZD', 'NIO', 'NGN', 'NOK', 'OMR', 'PKR', 'PAB', 'PGK', 'PYG', 'PEN', 'PHP', 'PLN', 'QAR', 'RON', 'RUB', 'RWF', 'SHP', 'WST', 'STN', 'SAR', 'RSD', 'SCR', 'SLE', 'SGD', 'SBD', 'SOS', 'ZAR', 'KRW', 'SSP', 'LKR', 'SDG', 'SRD', 'SZL', 'SEK', 'CHF', 'TWD', 'TJS', 'TZS', 'THB', 'TOP', 'TTD', 'TND', 'TRY', 'TMT', 'UGX', 'UAH', 'AED', 'USD', 'UYU', 'UZS', 'VUV', 'VES', 'VND', 'YER', 'ZMW', 'ZWL']
+supportedCurrenciesAlipay = ['CNY','HKD','JPY','THB','USD','GBP','EUR','AUD','TWD','KRW','PHP','AED','CAD','MYR','MOP','NZD','CHF','QAR','SAR','ZAR','VND','CNY','THB','AUD','KRW','JPY','GBP','IDR','PHP','RUB','TWD','HKD','AED','EUR','DKK','USD','CAD','MYR','NOK','MOP','SGD','LKR','CZK','SEK','NZD']
 
 def getUnionRate(basecurrName, transcurrName, unionDate):
     url = f"https://www.unionpayintl.com/upload/jfimg/{unionDate}.json"
@@ -63,6 +65,28 @@ def getMasterRate(basecurrName, transcurrName, masterDate, bankFee):
 		rate = data['data']['conversionRate']
 		return rate
 
+def getAlipayRate(transcurrName):
+    url = "https://basement-gzone.alipay.com/mgw_proxy/unauthorized_endpoint?requestData=[{%22x-basement-operation%22:%22com.alipay.overseatwa.xservices.index.queryRate%22}]"
+    headers = {
+        "Referer": "https://www.mastercard.us/en-us/personal/get-support/convert-currency.html",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    } 
+    response = httpx.get(url, headers=headers)
+    data = response.json()
+    result_data = data.get('result').get('result')
+    resultData = json.loads(result_data.get('resultData'))
+    currency_list = resultData.get("commonRateList")
+    rate = None
+    for rate_info in currency_list:
+        if rate_info["currencyInfo"]["engAbbr"] == transcurrName:
+            rate = rate_info["mbarcodeRate"]
+            break
+
+    if rate is not None:
+        return rate
+    else:
+        return f"{currency_abbr} currency not found in the data."
+
 def cache_key():
     return request.url
 
@@ -87,6 +111,8 @@ def getRate():
         message.append("Visa does not support this currency!")
     if transcurrName not in supportedCurrenciesMaster:
         message.append("Mastercard does not support this currency!")
+    if transcurrName not in supportedCurrenciesAlipay:
+        message.append("Alipay does not support this currency!")
     respList = []
     resp = {
         "message": message,
@@ -119,10 +145,15 @@ def getRate():
                 visaRate = getVisaRate(basecurrName, transcurrName, visaDate, bankFee)
             if transcurrName in supportedCurrenciesMaster:
                 masterRate = getMasterRate(basecurrName, transcurrName, formattedDate, bankFee)
+            if transcurrName in supportedCurrenciesAlipay:
+                alipayRate = getAlipayRate(transcurrName)
+            else:
+                alipayRate = "Unsupported Currency"
             respDict = {
                 "visaRate": visaRate,
                 "unionRate": unionRate,
                 "masterRate": masterRate,
+                "alipayRate": alipayRate,
                 "releaseDate": formattedDate
             }
             respList.append(respDict)
