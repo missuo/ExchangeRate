@@ -19,8 +19,6 @@ A free RMB exchange rate API written in Flask
 
 ### Response
 ```json
-// 20231121013418
-
 {
   "data": [
     {
